@@ -1,25 +1,24 @@
-import React from "react";
-import logo from "logo.svg";
-import "App.css";
+import WelcomePage from "Page/WelcomePage";
+import React, { Fragment, useState } from "react";
+import Box from "@material-ui/core/Box";
+import { LeftMenuDesktop, LeftMenuMobile } from "Component/LeftMenu";
+import Main from "Component/Main";
+import TopMenu from "Component/TopMenu";
 
 function App() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <Box display="flex" minHeight="100vh">
+        <TopMenu open={open} setOpen={setOpen} />
+        <LeftMenuDesktop setOpen={setOpen} />
+        <LeftMenuMobile open={open} setOpen={setOpen} />
+        <Main>
+          <WelcomePage />
+        </Main>
+      </Box>
+    </Fragment>
   );
 }
 
