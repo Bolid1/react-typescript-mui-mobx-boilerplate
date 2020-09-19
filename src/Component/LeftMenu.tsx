@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
@@ -14,6 +15,7 @@ import BillsIcon from "@material-ui/icons/Receipt";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PieChartIcon from "@material-ui/icons/PieChart";
+import { useStore } from "Provider";
 
 const drawerWidth = 240;
 
@@ -71,11 +73,8 @@ function Content() {
   );
 }
 
-function LeftMenuDesktopDrawer({
-  setOpen,
-}: {
-  setOpen: (open: boolean) => any;
-}) {
+function LeftMenuDesktopDrawer() {
+  const { setOpen } = useStore().leftMenu;
   const classes = useStyles();
 
   useEffect(() => {
@@ -94,26 +93,17 @@ function LeftMenuDesktopDrawer({
   );
 }
 
-export function LeftMenuDesktop({
-  setOpen,
-}: {
-  setOpen: (open: boolean) => any;
-}) {
+export function LeftMenuDesktop() {
   return (
     <Hidden smDown={true}>
-      <LeftMenuDesktopDrawer setOpen={setOpen} />
+      <LeftMenuDesktopDrawer />
     </Hidden>
   );
 }
 
-export function LeftMenuMobile({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => any;
-}) {
+export const LeftMenuMobile = observer(() => {
   const classes = useStyles();
+  const { open, setOpen } = useStore().leftMenu;
 
   return (
     <Hidden mdUp={true}>
@@ -129,4 +119,4 @@ export function LeftMenuMobile({
       </Drawer>
     </Hidden>
   );
-}
+});
