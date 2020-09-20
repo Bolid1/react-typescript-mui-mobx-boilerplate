@@ -23,6 +23,7 @@ export default function TopMenu() {
           </IconButton>
         </Toolbar>
       </AppBar>
+      <Toolbar />
     </Hidden>
   );
 }

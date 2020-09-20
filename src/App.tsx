@@ -11,10 +11,10 @@ const TopMenu = lazy(() => import("Component/TopMenu"));
 function App() {
   return (
     <Router>
+      <Suspense fallback={""}>
+        <TopMenu />
+      </Suspense>
       <Box display="flex" minHeight="100vh">
-        <Suspense fallback={""}>
-          <TopMenu />
-        </Suspense>
         <Suspense fallback={""}>
           <LeftMenu />
         </Suspense>
