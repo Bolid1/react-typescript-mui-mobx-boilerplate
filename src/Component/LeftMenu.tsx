@@ -77,7 +77,11 @@ function Content() {
         {routes
           .filter(({ leftMenu }) => leftMenu)
           .map(({ Icon, ...route }) => (
-            <ContentItem title={route.title} path={route.path}>
+            <ContentItem
+              key={route.title}
+              title={route.title}
+              path={route.path}
+            >
               <Icon />
             </ContentItem>
           ))}
