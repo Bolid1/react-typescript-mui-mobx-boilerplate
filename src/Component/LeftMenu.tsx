@@ -1,21 +1,17 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, Suspense, useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import ListItem, { ListItemProps } from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Toolbar from "@material-ui/core/Toolbar";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import AccountsIcon from "@material-ui/icons/AccountBalanceWallet";
-import AnalyticsIcon from "@material-ui/icons/Assessment";
-import BillsIcon from "@material-ui/icons/Receipt";
-import DashboardIcon from "@material-ui/icons/Dashboard";
-import SettingsIcon from "@material-ui/icons/Settings";
 import PieChartIcon from "@material-ui/icons/PieChart";
 import { useStore } from "Provider";
+import routes from "config/routes";
 
 const drawerWidth = 240;
 
@@ -30,44 +26,35 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+function ListItemLink(props: ListItemProps<Link, { button?: true }>) {
+  return <ListItem button component={Link} {...props} />;
+}
+
 function Content() {
   return (
     <Fragment>
-      <Toolbar style={{ flexShrink: 0, justifyContent: "center" }}>
-        <PieChartIcon fontSize="large" />
-      </Toolbar>
+      <List>
+        <ListItemLink button to="/">
+          <ListItemIcon>
+            <PieChartIcon />
+          </ListItemIcon>
+          <ListItemText primary="SmartChoice" />
+        </ListItemLink>
+      </List>
       <Divider />
       <List>
-        <ListItem button>
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <AccountsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Accounts" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <BillsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Bills" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <AnalyticsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Analytics" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Settings" />
-        </ListItem>
+        {routes
+          .filter(({ leftMenu }) => leftMenu)
+          .map(({ Icon, ...route }) => (
+            <Suspense key={route.title} fallback={<div>loading...</div>}>
+              <ListItemLink button to={route.path}>
+                <ListItemIcon>
+                  <Icon />
+                </ListItemIcon>
+                <ListItemText primary={route.title} />
+              </ListItemLink>
+            </Suspense>
+          ))}
       </List>
     </Fragment>
   );

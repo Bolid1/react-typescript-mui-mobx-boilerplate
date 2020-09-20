@@ -142,7 +142,7 @@ export default function WelcomePage() {
           </OutLink>{" "}
           used as application state holder
         </ToDoListItem>
-        <ToDoListItem checked={false} labelId="router">
+        <ToDoListItem checked={true} labelId="router">
           Find out router
         </ToDoListItem>
       </List>
