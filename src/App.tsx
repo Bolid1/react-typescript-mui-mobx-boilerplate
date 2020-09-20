@@ -2,10 +2,10 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Box from "@material-ui/core/Box";
 import routes from "config/routes";
+import Main from "Component/Main";
 
 const WelcomePage = lazy(() => import("Page/WelcomePage"));
 const LeftMenu = lazy(() => import("Component/LeftMenu"));
-const Main = lazy(() => import("Component/Main"));
 const TopMenu = lazy(() => import("Component/TopMenu"));
 
 function App() {
