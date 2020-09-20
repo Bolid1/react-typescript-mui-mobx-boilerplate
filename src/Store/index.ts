@@ -1,5 +1,6 @@
 import { types } from "mobx-state-tree";
 import { persist } from "mst-persist";
+import { createContext, useContext } from "react";
 
 const LeftMenu = types
   .model("LeftMenu", {
@@ -15,10 +16,16 @@ const Store = types.model("Store", {
   leftMenu: types.optional(LeftMenu, {}),
 });
 
-export default function createStore() {
+function createStore() {
   const store = Store.create();
 
   persist("store", store, {});
 
   return store;
 }
+
+const store = createStore();
+const StoreContext = createContext(store);
+const useStore = () => useContext(StoreContext);
+
+export default useStore;

@@ -1,8 +1,7 @@
-import React, { PropsWithChildren, createContext, useContext } from "react";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
-import { ThemeProvider } from "@material-ui/core/styles";
+import React, { PropsWithChildren } from "react";
 import green from "@material-ui/core/colors/green";
-import createStore from "Store";
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 
 const theme = createMuiTheme({
   palette: {
@@ -10,10 +9,6 @@ const theme = createMuiTheme({
     primary: green,
   },
 });
-
-const store = createStore();
-const StoreContext = createContext(store);
-export const useStore = () => useContext(StoreContext);
 
 export default function Provider({ children }: PropsWithChildren<any>) {
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
