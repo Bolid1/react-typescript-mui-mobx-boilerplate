@@ -1,4 +1,10 @@
-import React, { Fragment, Suspense, useEffect } from "react";
+import React, {
+  Fragment,
+  lazy,
+  PropsWithChildren,
+  Suspense,
+  useEffect,
+} from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -9,9 +15,11 @@ import ListItem, { ListItemProps } from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import PieChartIcon from "@material-ui/icons/PieChart";
-import { useStore } from "Provider";
 import routes from "config/routes";
+import useStore from "Store";
+import Loader from "Component/Loader";
+
+const PieChartIcon = lazy(() => import("@material-ui/icons/PieChart"));
 
 const drawerWidth = 240;
 
@@ -30,37 +38,55 @@ function ListItemLink(props: ListItemProps<Link, { button?: true }>) {
   return <ListItem button component={Link} {...props} />;
 }
 
+function ListItemLinkFallback({ title }: { title: string }) {
+  return (
+    <ListItem>
+      <ListItemIcon>
+        <Loader />
+      </ListItemIcon>
+      <ListItemText primary={title} />
+    </ListItem>
+  );
+}
+
+function ContentItem({
+  title,
+  path,
+  children,
+}: PropsWithChildren<{ title: string; path: string }>) {
+  return (
+    <Suspense key={title} fallback={<ListItemLinkFallback title={title} />}>
+      <ListItemLink to={path}>
+        <ListItemIcon>{children}</ListItemIcon>
+        <ListItemText primary={title} />
+      </ListItemLink>
+    </Suspense>
+  );
+}
+
 function Content() {
   return (
     <Fragment>
       <List>
-        <ListItemLink button to="/">
-          <ListItemIcon>
-            <PieChartIcon />
-          </ListItemIcon>
-          <ListItemText primary="SmartChoice" />
-        </ListItemLink>
+        <ContentItem title="SmartChoice" path="/">
+          <PieChartIcon />
+        </ContentItem>
       </List>
       <Divider />
       <List>
         {routes
           .filter(({ leftMenu }) => leftMenu)
           .map(({ Icon, ...route }) => (
-            <Suspense key={route.title} fallback={<div>loading...</div>}>
-              <ListItemLink button to={route.path}>
-                <ListItemIcon>
-                  <Icon />
-                </ListItemIcon>
-                <ListItemText primary={route.title} />
-              </ListItemLink>
-            </Suspense>
+            <ContentItem title={route.title} path={route.path}>
+              <Icon />
+            </ContentItem>
           ))}
       </List>
     </Fragment>
   );
 }
 
-function LeftMenuDesktopDrawer() {
+function LeftMenuDesktop() {
   const { setOpen } = useStore().leftMenu;
   const classes = useStyles();
 
@@ -80,30 +106,34 @@ function LeftMenuDesktopDrawer() {
   );
 }
 
-export function LeftMenuDesktop() {
-  return (
-    <Hidden smDown={true}>
-      <LeftMenuDesktopDrawer />
-    </Hidden>
-  );
-}
-
-export const LeftMenuMobile = observer(() => {
+const LeftMenuMobile = observer(() => {
   const classes = useStyles();
   const { open, setOpen } = useStore().leftMenu;
 
   return (
-    <Hidden mdUp={true}>
-      <Drawer
-        variant="temporary"
-        anchor="left"
-        open={open}
-        onClose={() => setOpen(false)}
-        className={classes.root}
-        classes={{ paper: classes.paper }}
-      >
-        <Content />
-      </Drawer>
-    </Hidden>
+    <Drawer
+      variant="temporary"
+      anchor="left"
+      open={open}
+      onClose={() => setOpen(false)}
+      className={classes.root}
+      classes={{ paper: classes.paper }}
+    >
+      <Content />
+    </Drawer>
   );
 });
+
+export default function LeftMenu() {
+  return (
+    <Fragment>
+      <Hidden smDown={true}>
+        <LeftMenuDesktop />
+      </Hidden>
+
+      <Hidden mdUp={true}>
+        <LeftMenuMobile />
+      </Hidden>
+    </Fragment>
+  );
+}
