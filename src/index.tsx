@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { StrictMode, Suspense, lazy } from "react";
 import Loader from "Component/Loader";
 import * as serviceWorker from "serviceWorker";
 
@@ -28,16 +28,18 @@ if (loader) {
 
 import("react-dom").then((ReactDOM) =>
   ReactDOM.render(
-    <Suspense fallback={<AppLoader />}>
-      <Provider>
-        <Suspense fallback={""}>
-          <Baseline />
-        </Suspense>
-        <Suspense fallback={<AppLoader />}>
-          <App />
-        </Suspense>
-      </Provider>
-    </Suspense>,
+    <StrictMode>
+      <Suspense fallback={<AppLoader />}>
+        <Provider>
+          <Suspense fallback={""}>
+            <Baseline />
+          </Suspense>
+          <Suspense fallback={<AppLoader />}>
+            <App />
+          </Suspense>
+        </Provider>
+      </Suspense>
+    </StrictMode>,
     root
   )
 );
