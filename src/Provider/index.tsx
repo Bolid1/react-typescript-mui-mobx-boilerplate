@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import green from "@material-ui/core/colors/green";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
@@ -11,5 +12,9 @@ const theme = createMuiTheme({
 });
 
 export default function Provider({ children }: PropsWithChildren<any>) {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return (
+    <Router>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </Router>
+  );
 }

@@ -1,48 +1,64 @@
 import { lazy, ComponentType, LazyExoticComponent } from "react";
 
 interface Route {
-  leftMenu: boolean;
   path: string;
+  exact?: boolean;
   title: string;
-  Icon: LazyExoticComponent<ComponentType<any>>;
   Page: LazyExoticComponent<ComponentType<any>>;
   // Loader: ComponentType<any>;
+
+  // Left Menu
+  hideLeftMenu?: boolean;
+  leftMenu: number;
+  Icon: LazyExoticComponent<ComponentType<any>>;
+
+  // Top Menu
+  hideTopMenu?: boolean;
+  TopMenu?: LazyExoticComponent<ComponentType<any>>;
 }
 
 export default [
   {
-    leftMenu: true,
+    path: "/",
+    exact: true,
+    title: "SmartChoice",
+    Page: lazy(() => import("Page/WelcomePage")),
+    leftMenu: 0,
+    Icon: lazy(() => import("@material-ui/icons/PieChart")),
+  },
+  {
     path: "/dashboard",
     title: "Dashboard",
-    Icon: lazy(() => import("@material-ui/icons/Dashboard")),
     Page: lazy(() => import("Page/DashboardPage")),
+    leftMenu: 1,
+    Icon: lazy(() => import("@material-ui/icons/Dashboard")),
   },
   {
-    leftMenu: true,
     path: "/accounts",
     title: "Accounts",
-    Icon: lazy(() => import("@material-ui/icons/AccountBalanceWallet")),
     Page: lazy(() => import("Page/AccountsPage")),
+    leftMenu: 1,
+    Icon: lazy(() => import("@material-ui/icons/AccountBalanceWallet")),
   },
   {
-    leftMenu: true,
     path: "/bills",
     title: "Bills",
-    Icon: lazy(() => import("@material-ui/icons/Receipt")),
     Page: lazy(() => import("Page/BillsPage")),
+    leftMenu: 1,
+    Icon: lazy(() => import("@material-ui/icons/Receipt")),
   },
   {
-    leftMenu: true,
     path: "/analytics",
     title: "Analytics",
-    Icon: lazy(() => import("@material-ui/icons/Assessment")),
     Page: lazy(() => import("Page/AnalyticsPage")),
+    leftMenu: 1,
+    Icon: lazy(() => import("@material-ui/icons/Assessment")),
   },
   {
-    leftMenu: true,
+    Page: lazy(() => import("Page/SettingsPage")),
     path: "/settings",
     title: "Settings",
+    leftMenu: 1,
     Icon: lazy(() => import("@material-ui/icons/Settings")),
-    Page: lazy(() => import("Page/SettingsPage")),
   },
 ] as Route[];

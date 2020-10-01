@@ -1,38 +1,77 @@
-import React, { Suspense, lazy } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Box from "@material-ui/core/Box";
+import React, { Fragment, Suspense } from "react";
+import { Route, Switch } from "react-router-dom";
+import Loader from "Component/Loader";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import createStyles from "@material-ui/core/styles/createStyles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import LeftMenu from "Component/LeftMenu";
 import routes from "config/routes";
-import Main from "Component/Main";
+import DefaultTopMenu from "Component/TopMenu";
 
-const WelcomePage = lazy(() => import("Page/WelcomePage"));
-const LeftMenu = lazy(() => import("Component/LeftMenu"));
-const TopMenu = lazy(() => import("Component/TopMenu"));
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      display: "flex",
+    },
+    toolbar: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      padding: theme.spacing(0, 1),
+      // necessary for content to be below app bar
+      ...theme.mixins.toolbar,
+    },
+    content: {
+      flexGrow: 1,
+    },
+  })
+);
 
-function App() {
+export default function App() {
+  const classes = useStyles();
+
   return (
-    <Router>
-      <Suspense fallback={""}>
-        <TopMenu />
-      </Suspense>
-      <Box display="flex" minHeight="100vh">
-        <Suspense fallback={""}>
-          <LeftMenu />
-        </Suspense>
-        <Main>
-          <Switch>
-            <Route exact path="/">
-              <WelcomePage />
+    <Fragment>
+      <CssBaseline />
+      <Switch>
+        {routes
+          .filter((route) => !route.hideTopMenu)
+          .map(({ TopMenu, ...route }) => ({
+            ...route,
+            TopMenu: TopMenu || DefaultTopMenu,
+          }))
+          .map(({ TopMenu, ...route }) => (
+            <Route key={route.path} exact={route.exact} path={route.path}>
+              <Suspense fallback={<Loader />}>
+                <TopMenu title={route.title} />
+              </Suspense>
             </Route>
+          ))}
+      </Switch>
+      <div style={{ display: "flex" }}>
+        <Switch>
+          {routes
+            .filter(({ hideLeftMenu }) => !hideLeftMenu)
+            .map((route) => (
+              <Route key={route.path} exact={route.exact} path={route.path}>
+                <Suspense fallback={<Loader height="100vh" />}>
+                  <LeftMenu />
+                </Suspense>
+              </Route>
+            ))}
+        </Switch>
+        <main className={classes.content}>
+          <Switch>
             {routes.map(({ Page, ...route }) => (
-              <Route key={route.path} path={route.path}>
-                <Page />
+              <Route key={route.path} exact={route.exact} path={route.path}>
+                <Suspense fallback={<Loader height="100vh" />}>
+                  <Page />
+                </Suspense>
               </Route>
             ))}
           </Switch>
-        </Main>
-      </Box>
-    </Router>
+        </main>
+      </div>
+    </Fragment>
   );
 }
-
-export default App;

@@ -1,31 +1,61 @@
-import { types } from "mobx-state-tree";
-import { persist } from "mst-persist";
+import { makeAutoObservable } from "mobx";
 import { createContext, useContext } from "react";
 
-const LeftMenu = types
-  .model("LeftMenu", {
-    open: types.optional(types.boolean, false),
-  })
-  .actions((self) => ({
-    setOpen(open: boolean) {
-      self.open = open;
-    },
-  }));
+class LeftMenu {
+  public isOpened = false;
 
-const Store = types.model("Store", {
-  leftMenu: types.optional(LeftMenu, {}),
-});
+  constructor() {
+    makeAutoObservable(this, undefined, {
+      autoBind: true,
+    });
+  }
 
-function createStore() {
-  const store = Store.create();
+  open(isOpened: boolean = true) {
+    this.isOpened = isOpened;
+  }
 
-  persist("store", store, {});
+  toggle() {
+    this.isOpened = !this.isOpened;
+  }
 
-  return store;
+  close() {
+    this.isOpened = false;
+  }
 }
 
-const store = createStore();
+class UiStore {
+  public rootStore: RootStore;
+  public leftMenu: LeftMenu;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    this.leftMenu = new LeftMenu();
+  }
+}
+
+class DomainStore {
+  public rootStore: RootStore;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+}
+
+class RootStore {
+  public ui: UiStore;
+  public domain: DomainStore;
+
+  constructor() {
+    this.ui = new UiStore(this);
+    this.domain = new DomainStore(this);
+  }
+}
+
+const store = new RootStore();
 const StoreContext = createContext(store);
 const useStore = () => useContext(StoreContext);
+
+export const useUIStore = () => useStore().ui;
+export const useDomainStore = () => useStore().domain;
 
 export default useStore;
